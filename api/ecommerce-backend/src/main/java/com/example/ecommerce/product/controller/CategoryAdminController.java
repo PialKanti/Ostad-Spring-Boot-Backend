@@ -2,9 +2,9 @@ package com.example.ecommerce.product.controller;
 
 import com.example.ecommerce.common.constants.ApiEndpoints;
 import com.example.ecommerce.common.dto.ApiResponse;
-import com.example.ecommerce.product.dto.request.ProductCreateRequest;
-import com.example.ecommerce.product.entity.Product;
-import com.example.ecommerce.product.service.ProductService;
+import com.example.ecommerce.product.dto.request.CategoryCreateRequest;
+import com.example.ecommerce.product.entity.Category;
+import com.example.ecommerce.product.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,37 +17,40 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(ApiEndpoints.ProductAdmin.BASE_PRODUCT_ADMIN)
+@RequestMapping(ApiEndpoints.CategoryAdmin.BASE_CATEGORY_ADMIN)
 @RequiredArgsConstructor
 @Tag(
-        name = "Product Admin",
-        description = "Admin operations for managing products")
-public class ProductAdminController {
-    private final ProductService productService;
+        name = "Category Admin",
+        description = "Administrative operations for managing product categories"
+)
+public class CategoryAdminController {
+    private final CategoryService categoryService;
 
     @Operation(
-            summary = "Create a new product",
-            description = "Creates a new product in the system. Validates SKU uniqueness and category existence.",
+            summary = "Create a new category",
+            description = "Creates a new product category. Category code must be unique.",
             responses = {
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "200",
-                            description = "Product created successfully",
-                            content = @Content(schema = @Schema(implementation = Product.class))
+                            description = "Category created successfully",
+                            content = @Content(
+                                    schema = @Schema(implementation = Category.class)
+                            )
                     ),
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "400",
-                            description = "Validation error or bad request",
+                            description = "Validation error",
                             content = @Content
                     ),
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "409",
-                            description = "Duplicate SKU or resource conflict",
+                            description = "Category code already exists",
                             content = @Content
                     )
             }
     )
     @PostMapping
-    public ResponseEntity<ApiResponse<Product>> createProduct(@Valid ProductCreateRequest request) {
-        return ResponseEntity.ok(ApiResponse.success(productService.create(request)));
+    public ResponseEntity<ApiResponse<Category>> createCategory(@Valid CategoryCreateRequest request) {
+        return ResponseEntity.ok(ApiResponse.success(categoryService.create(request)));
     }
 }

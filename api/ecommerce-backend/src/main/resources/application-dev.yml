@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: admin
+    password: admin@123
+    url: jdbc:postgresql://localhost:5432/ecommerce_db

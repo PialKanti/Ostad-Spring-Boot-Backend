@@ -10,8 +10,7 @@ CREATE TABLE products
 
     category_id BIGINT         NOT NULL REFERENCES categories (id) ON DELETE RESTRICT,
 
-    image_url   VARCHAR(100),
-    unit        VARCHAR(50),
+    image_url   VARCHAR(250),
 
     created_at  TIMESTAMP,
     modified_at TIMESTAMP,

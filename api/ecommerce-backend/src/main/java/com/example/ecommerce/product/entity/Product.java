@@ -32,11 +32,8 @@ public class Product extends BaseEntity implements Auditable {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @Column(length = 100)
+    @Column(length = 250)
     private String imageUrl;
-
-    @Column(length = 50)
-    private String unit;
 
     // Auditing fields
     @Column(name = "created_at")

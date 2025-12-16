@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Tag(
         name = "Product Admin",
-        description = "Admin operations for managing products")
+        description = "Administrative operations for managing products")
 public class ProductAdminController {
     private final ProductService productService;
 

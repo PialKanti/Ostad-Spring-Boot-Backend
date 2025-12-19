@@ -53,4 +53,17 @@ public class CategoryAdminController {
     public ResponseEntity<ApiResponse<Category>> createCategory(@Valid CategoryCreateRequest request) {
         return ResponseEntity.ok(ApiResponse.success(categoryService.create(request)));
     }
+
+    // TODO: Implement endpoint to retrieve category details by ID
+
+    // TODO: Implement paginated category listing with filters
+    //      (active status, parent category)
+
+    // TODO: Implement endpoint to update category information
+    //      (name, description)
+
+    // TODO: Implement endpoint to activate or deactivate a category
+    //      (soft delete via isActive flag)
+
+    // TODO: Implement endpoint to permanently delete a category
 }

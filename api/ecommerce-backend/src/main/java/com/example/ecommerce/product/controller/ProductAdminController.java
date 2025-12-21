@@ -48,7 +48,7 @@ public class ProductAdminController {
             }
     )
     @PostMapping
-    public ResponseEntity<ApiResponse<Product>> createProduct(@Valid ProductCreateRequest request) {
+    public ResponseEntity<ApiResponse<Product>> createProduct(@Valid @RequestBody ProductCreateRequest request) {
         return ResponseEntity.ok(ApiResponse.success(productService.create(request)));
     }
 
@@ -68,7 +68,7 @@ public class ProductAdminController {
     // TODO: Implement endpoint to permanently delete a product
 
     @PutMapping(ApiEndpoints.ProductAdmin.PRODUCT_INVENTORY)
-    public ResponseEntity<ApiResponse<Void>> updateStock(@PathVariable Long productId, @Valid InventoryUpdateRequest request) {
+    public ResponseEntity<ApiResponse<Void>> updateStock(@PathVariable Long productId, @Valid @RequestBody InventoryUpdateRequest request) {
         inventoryService.updateStock(productId, request);
         return ResponseEntity.ok(ApiResponse.success("Stock updated successfully."));
     }

@@ -2,7 +2,9 @@
 CREATE TABLE carts
 (
     id          BIGSERIAL PRIMARY KEY,
+    user_id     BIGINT  NOT NULL,
     is_active   BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP,
     modified_at TIMESTAMP
 );
 

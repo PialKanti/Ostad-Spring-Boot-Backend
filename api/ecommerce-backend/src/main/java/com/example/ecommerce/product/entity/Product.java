@@ -1,18 +1,15 @@
 package com.example.ecommerce.product.entity;
 
-import com.example.ecommerce.common.entity.Auditable;
-import com.example.ecommerce.common.entity.BaseEntity;
+import com.example.ecommerce.common.entity.AuditableEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "products")
 @Getter
 @Setter
-public class Product extends BaseEntity implements Auditable {
+public class Product extends AuditableEntity {
     @Column(nullable = false, length = 100, unique = true)
     private String sku;
 
@@ -34,17 +31,4 @@ public class Product extends BaseEntity implements Auditable {
 
     @Column(length = 250)
     private String imageUrl;
-
-    // Auditing fields
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @Column(name = "modified_at")
-    private LocalDateTime modifiedAt;
-
-    @Column(name = "created_by")
-    private Long createdBy;
-
-    @Column(name = "modified_by")
-    private Long modifiedBy;
 }

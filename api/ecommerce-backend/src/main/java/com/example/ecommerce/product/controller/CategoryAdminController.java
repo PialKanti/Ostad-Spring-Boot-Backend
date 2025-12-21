@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -88,7 +89,11 @@ public class CategoryAdminController {
             }
     )
     @GetMapping
-    public ResponseEntity<ApiResponse<PaginatedResponse<Category>>> listCategories(Pageable pageable) {
+    public ResponseEntity<ApiResponse<PaginatedResponse<Category>>> listCategories(@RequestParam(name = "page", defaultValue = "0")
+                                                                                   Integer page,
+                                                                                   @RequestParam(name = "size", defaultValue = "10")
+                                                                                   Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(ApiResponse.success(PaginatedResponse.of(categoryService.getAll(pageable))));
     }
 

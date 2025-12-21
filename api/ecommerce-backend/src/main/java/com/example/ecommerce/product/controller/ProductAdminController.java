@@ -2,8 +2,10 @@ package com.example.ecommerce.product.controller;
 
 import com.example.ecommerce.common.constants.ApiEndpoints;
 import com.example.ecommerce.common.dto.ApiResponse;
+import com.example.ecommerce.product.dto.request.InventoryUpdateRequest;
 import com.example.ecommerce.product.dto.request.ProductCreateRequest;
 import com.example.ecommerce.product.entity.Product;
+import com.example.ecommerce.product.service.InventoryService;
 import com.example.ecommerce.product.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,9 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(ApiEndpoints.ProductAdmin.BASE_PRODUCT_ADMIN)
@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
         description = "Administrative operations for managing products")
 public class ProductAdminController {
     private final ProductService productService;
+    private final InventoryService inventoryService;
 
     @Operation(
             summary = "Create a new product",
@@ -65,4 +66,10 @@ public class ProductAdminController {
     //      (soft delete via isActive flag)
 
     // TODO: Implement endpoint to permanently delete a product
+
+    @PutMapping(ApiEndpoints.ProductAdmin.PRODUCT_INVENTORY)
+    public ResponseEntity<ApiResponse<Void>> updateStock(@PathVariable Long productId, @Valid InventoryUpdateRequest request) {
+        inventoryService.updateStock(productId, request);
+        return ResponseEntity.ok(ApiResponse.success("Stock updated successfully."));
+    }
 }

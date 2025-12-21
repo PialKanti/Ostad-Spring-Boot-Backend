@@ -2,9 +2,8 @@
 CREATE TABLE carts
 (
     id          BIGSERIAL PRIMARY KEY,
-    user_id     BIGINT  NOT NULL,
-    is_active   BOOLEAN NOT NULL DEFAULT TRUE,
-    created_at TIMESTAMP,
+    user_id     BIGINT NOT NULL,
+    created_at  TIMESTAMP,
     modified_at TIMESTAMP
 );
 
@@ -15,6 +14,7 @@ CREATE TABLE cart_items
     cart_id    BIGINT  NOT NULL,
     product_id BIGINT  NOT NULL,
     quantity   INTEGER NOT NULL,
+    unit_price NUMERIC(15, 2) NOT NULL,
 
     CONSTRAINT fk_cart_items_cart FOREIGN KEY (cart_id)
         REFERENCES carts (id)

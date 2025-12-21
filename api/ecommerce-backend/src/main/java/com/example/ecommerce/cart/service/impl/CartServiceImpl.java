@@ -20,36 +20,47 @@ public class CartServiceImpl implements CartService {
 
     @Transactional
     @Override
-    public void addOrUpdateCartItems(Long userId, CartRequest request) {
-        Cart cart = cartRepository.findByUserIdAndIsActiveTrue(userId)
-                .orElseGet(() -> {
-                    Cart newCart = Cart.builder()
-                            .userId(userId)
-                            .isActive(true)
-                            .build();
+    public void addOrUpdateCartItem(Long productId, CartRequest request) {
+        Cart cart = cartRepository.findByUserId(request.userId())
+                .orElseGet(() -> cartRepository.save(
+                        Cart.builder()
+                                .userId(request.userId())
+                                .build())
+                );
 
-                    return cartRepository.save(newCart);
-                });
 
-        for (CartRequest.CartItemRequest itemRequest : request.items()) {
-            Product product = productRepository.findById(itemRequest.productId())
-                    .orElseThrow(() -> new EntityNotFoundException("Product not found: " + itemRequest.productId()));
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found: " + productId));
 
-            CartItem existingItem = cart.getItems().stream()
-                    .filter(cartItem -> cartItem.getProduct()
-                            .getId().equals(product.getId())).findFirst().orElse(null);
+        CartItem existingItem = cart.getItems().stream()
+                .filter(cartItem -> cartItem.getProduct()
+                        .getId().equals(product.getId())).findFirst().orElse(null);
 
-            if (existingItem != null) {
-                existingItem.setQuantity(itemRequest.quantity());
+
+        if (existingItem != null) {
+            if (request.quantity() == 0) {
+                cart.getItems().remove(existingItem);
             } else {
-                CartItem newItem = new CartItem();
-                newItem.setCart(cart);
-                newItem.setProduct(product);
-                newItem.setQuantity(itemRequest.quantity());
-                cart.getItems().add(newItem);
+                existingItem.setQuantity(request.quantity());
             }
+        } else {
+            CartItem newItem = CartItem.builder()
+                    .cart(cart)
+                    .product(product)
+                    .quantity(request.quantity())
+                    .unitPrice(product.getPrice())
+                    .build();
+
+            cart.getItems().add(newItem);
         }
 
+
         cartRepository.save(cart);
+    }
+
+    @Override
+    public Cart getCartByUserId(Long userId) {
+        return cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Cart not found for user: " + userId));
     }
 }

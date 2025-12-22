@@ -63,4 +63,12 @@ public class CartServiceImpl implements CartService {
         return cartRepository.findByUserId(userId)
                 .orElseThrow(() -> new EntityNotFoundException("Cart not found for user: " + userId));
     }
+
+    @Override
+    @Transactional
+    public void clearCart(Long userId) {
+        Cart cart = getCartByUserId(userId);
+        cart.getItems().clear();
+        cartRepository.save(cart);
+    }
 }

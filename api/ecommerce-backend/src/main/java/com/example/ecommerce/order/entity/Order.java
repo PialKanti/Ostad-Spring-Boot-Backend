@@ -3,8 +3,7 @@ package com.example.ecommerce.order.entity;
 import com.example.ecommerce.common.entity.BaseEntity;
 import com.example.ecommerce.order.enums.OrderStatus;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,6 +13,9 @@ import java.util.List;
 @Table(name = "orders")
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Order extends BaseEntity {
     @Column(name = "user_id", nullable = false)
     private Long userId;

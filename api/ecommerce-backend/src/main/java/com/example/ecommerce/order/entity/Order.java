@@ -21,6 +21,15 @@ public class Order extends BaseEntity {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
 
+    @Column(name = "subtotal", nullable = false)
+    private Double subTotal;
+
+    @Column(name = "discount_amount", nullable = false)
+    private Double discountAmount;
+
+    @Column(name = "delivery_charge", nullable = false)
+    private Double deliveryCharge;
+
     @Column(name = "total_price", nullable = false)
     private Double totalPrice;
 

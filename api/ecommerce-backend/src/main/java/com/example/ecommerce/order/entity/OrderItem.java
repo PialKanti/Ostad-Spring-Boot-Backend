@@ -20,6 +20,9 @@ public class OrderItem extends BaseEntity {
     @Column(name = "product_name", nullable = false)
     private String productName;
 
+    @Column(name = "sku")
+    private String sku;
+
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 

@@ -26,13 +26,13 @@ public class PaymentController {
     }
 
     @GetMapping(ApiEndpoints.Payment.SUCCESS)
-    public String paymentSuccess(@RequestParam("session_id") String sessionId) throws StripeException {
+    public ResponseEntity<ApiResponse<Void>> paymentSuccess(@RequestParam("session_id") String sessionId) throws StripeException {
         Session session = Session.retrieve(sessionId);
 
         String userId = session.getMetadata().get("userId");
         paymentService.handleSuccessfulPayment(Long.valueOf(userId));
 
-        return "Payment successful! Session ID: " + sessionId;
+        return ResponseEntity.ok(ApiResponse.success("Payment successful! Session ID: " + sessionId));
     }
 
     @GetMapping(ApiEndpoints.Payment.CANCEL)

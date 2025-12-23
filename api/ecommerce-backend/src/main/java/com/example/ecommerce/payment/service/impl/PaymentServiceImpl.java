@@ -39,6 +39,8 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         orderService.createOrder(userId, cart);
+
+        cartService.clearCart(userId);
     }
 
     private String createStripeCheckoutSession(Long userId, Cart cart) throws StripeException {

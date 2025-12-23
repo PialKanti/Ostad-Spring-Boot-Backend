@@ -36,7 +36,7 @@ public class OrderServiceImpl implements OrderService {
                 .discountAmount(discount)
                 .deliveryCharge(deliveryCharge)
                 .totalPrice(totalPrice)
-                .status(OrderStatus.NEW)
+                .status(OrderStatus.PAID)
                 .build();
 
         List<OrderItem> orderItems = orderMapper.toOrderItems(cart.getItems());
@@ -44,7 +44,5 @@ public class OrderServiceImpl implements OrderService {
 
         order.setItems(orderItems);
         orderRepository.save(order);
-
-        cartService.clearCart(userId);
     }
 }

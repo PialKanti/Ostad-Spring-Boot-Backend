@@ -71,4 +71,28 @@ public class CartServiceImpl implements CartService {
         cart.getItems().clear();
         cartRepository.save(cart);
     }
+
+    @Override
+    public double calculateSubTotalAmount(Cart cart) {
+        if (cart == null) {
+            return 0;
+        }
+
+        return cart.getItems().stream()
+                .mapToDouble(item -> item.getQuantity() * item.getUnitPrice())
+                .sum();
+    }
+
+    @Override
+    public double calculateTotalAmount(Cart cart) {
+        if (cart == null) {
+            return 0;
+        }
+
+        double subtotal = calculateSubTotalAmount(cart);
+
+        double discount = 0.0;
+        double deliveryCharge = 50.0;
+        return subtotal - discount + deliveryCharge;
+    }
 }

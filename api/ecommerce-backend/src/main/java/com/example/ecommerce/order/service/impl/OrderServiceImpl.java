@@ -8,7 +8,6 @@ import com.example.ecommerce.order.enums.OrderStatus;
 import com.example.ecommerce.order.mapper.OrderMapper;
 import com.example.ecommerce.order.repository.OrderRepository;
 import com.example.ecommerce.order.service.OrderService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,13 +21,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;
 
     @Override
-    @Transactional
-    public Order checkout(Long userId) {
-        Cart cart = cartService.getCartByUserId(userId);
-        if (cart.getItems().isEmpty()) {
-            throw new IllegalStateException("Cart is empty");
-        }
-
+    public void createOrder(Long userId, Cart cart) {
         double subtotal = cart.getItems().stream()
                 .mapToDouble(item -> item.getQuantity() * item.getUnitPrice())
                 .sum();
@@ -50,10 +43,8 @@ public class OrderServiceImpl implements OrderService {
         orderItems.forEach(item -> item.setOrder(order));
 
         order.setItems(orderItems);
-        Order savedOrder = orderRepository.save(order);
+        orderRepository.save(order);
 
         cartService.clearCart(userId);
-
-        return savedOrder;
     }
 }

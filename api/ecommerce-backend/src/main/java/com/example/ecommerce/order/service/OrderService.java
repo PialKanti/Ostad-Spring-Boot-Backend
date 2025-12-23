@@ -1,7 +1,7 @@
 package com.example.ecommerce.order.service;
 
-import com.example.ecommerce.order.entity.Order;
+import com.example.ecommerce.cart.entity.Cart;
 
 public interface OrderService {
-    Order checkout(Long userId);
+    void createOrder(Long userId, Cart cart);
 }

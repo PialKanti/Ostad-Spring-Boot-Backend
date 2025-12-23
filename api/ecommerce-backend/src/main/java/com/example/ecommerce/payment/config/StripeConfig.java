@@ -15,6 +15,7 @@ public class StripeConfig {
     private String apiKey;
     private String successUrl;
     private String cancelUrl;
+    private String currency;
 
     @PostConstruct
     public void init() {

@@ -24,4 +24,12 @@ public class ApiEndpoints {
         public static final String BASE_CART = API_VERSION + "/cart";
         public static final String ADD_CART_ITEM = BASE_CART + "/items/{productId}";
     }
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Payment {
+        public static final String BASE_PAYMENT = API_VERSION + "/payments";
+        public static final String CHECKOUT = "/checkout";
+        public static final String SUCCESS = "/success";
+        public static final String CANCEL = "/cancel";
+    }
 }

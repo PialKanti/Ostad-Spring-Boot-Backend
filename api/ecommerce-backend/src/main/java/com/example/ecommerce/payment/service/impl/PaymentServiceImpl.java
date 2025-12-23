@@ -1,6 +1,7 @@
 package com.example.ecommerce.payment.service.impl;
 
 import com.example.ecommerce.cart.entity.Cart;
+import com.example.ecommerce.cart.entity.CartItem;
 import com.example.ecommerce.cart.service.CartService;
 import com.example.ecommerce.order.service.OrderService;
 import com.example.ecommerce.payment.config.StripeConfig;
@@ -26,7 +27,7 @@ public class PaymentServiceImpl implements PaymentService {
             throw new IllegalStateException("Cart is empty");
         }
 
-        return generatePaymentUrl(userId, cartService.calculateTotalAmount(cart));
+        return createStripeCheckoutSession(userId, cart);
     }
 
     @Transactional
@@ -40,32 +41,53 @@ public class PaymentServiceImpl implements PaymentService {
         orderService.createOrder(userId, cart);
     }
 
-    private String generatePaymentUrl(Long userId, double totalAmount) throws StripeException {
-        SessionCreateParams params =
-                SessionCreateParams.builder()
-                        .setMode(SessionCreateParams.Mode.PAYMENT)
-                        .setSuccessUrl(stripeConfig.getSuccessUrl())
-                        .setCancelUrl(stripeConfig.getCancelUrl())
-                        .addLineItem(
-                                SessionCreateParams.LineItem.builder()
-                                        .setQuantity(1L)
-                                        .setPriceData(
-                                                SessionCreateParams.LineItem.PriceData.builder()
-                                                        .setCurrency(stripeConfig.getCurrency())
-                                                        .setUnitAmount((long) (totalAmount * 100))
-                                                        .setProductData(
-                                                                SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                                                                        .setName("Demo Order")
-                                                                        .build()
-                                                        )
-                                                        .build()
-                                        )
-                                        .build()
-                        )
-                        .putMetadata("userId", String.valueOf(userId))
-                        .build();
+    private String createStripeCheckoutSession(Long userId, Cart cart) throws StripeException {
+        SessionCreateParams.Builder paramsBuilder = SessionCreateParams.builder()
+                .setMode(SessionCreateParams.Mode.PAYMENT)
+                .setSuccessUrl(stripeConfig.getSuccessUrl())
+                .setCancelUrl(stripeConfig.getCancelUrl());
 
-        Session session = Session.create(params);
+        cart.getItems().forEach(item -> paramsBuilder.addLineItem(createLineItem(item)));
+
+        paramsBuilder.addLineItem(createDeliveryChargeLineItem(50));
+        paramsBuilder.putMetadata("userId", String.valueOf(userId));
+
+        Session session = Session.create(paramsBuilder.build());
         return session.getUrl();
+    }
+
+    private SessionCreateParams.LineItem createLineItem(CartItem cartItem) {
+        return SessionCreateParams.LineItem.builder()
+                .setQuantity(cartItem.getQuantity().longValue())
+                .setPriceData(
+                        SessionCreateParams.LineItem.PriceData.builder()
+                                .setCurrency(stripeConfig.getCurrency())
+                                .setUnitAmount((long) (cartItem.getUnitPrice() * 100))
+                                .setProductData(
+                                        SessionCreateParams.LineItem.PriceData.ProductData.builder()
+                                                .setName(cartItem.getProduct().getName())
+                                                .setDescription(cartItem.getProduct().getDescription())
+                                                .build()
+                                )
+                                .build()
+                )
+                .build();
+    }
+
+    private SessionCreateParams.LineItem createDeliveryChargeLineItem(double deliveryCharge) {
+        return SessionCreateParams.LineItem.builder()
+                .setQuantity(1L)
+                .setPriceData(
+                        SessionCreateParams.LineItem.PriceData.builder()
+                                .setCurrency(stripeConfig.getCurrency())
+                                .setUnitAmount((long) (deliveryCharge * 100))
+                                .setProductData(
+                                        SessionCreateParams.LineItem.PriceData.ProductData.builder()
+                                                .setName("Delivery Charge")
+                                                .build()
+                                )
+                                .build()
+                )
+                .build();
     }
 }

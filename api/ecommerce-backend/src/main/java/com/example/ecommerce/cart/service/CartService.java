@@ -9,8 +9,4 @@ public interface CartService {
     Cart getCartByUserId(Long userId);
 
     void clearCart(Long userId);
-
-    double calculateSubTotalAmount(Cart cart);
-
-    double calculateTotalAmount(Cart cart);
 }

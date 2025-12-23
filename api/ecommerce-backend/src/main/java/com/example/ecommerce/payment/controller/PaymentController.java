@@ -1,6 +1,8 @@
 package com.example.ecommerce.payment.controller;
 
 import com.example.ecommerce.common.constants.ApiEndpoints;
+import com.example.ecommerce.common.dto.ApiResponse;
+import com.example.ecommerce.payment.dto.response.CheckoutResponse;
 import com.example.ecommerce.payment.service.PaymentService;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
@@ -15,8 +17,12 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @PostMapping(ApiEndpoints.Payment.CHECKOUT)
-    public ResponseEntity<String> checkout(@RequestParam(name = "user_id") Long useId) throws StripeException {
-        return ResponseEntity.ok(paymentService.checkout(useId));
+    public ResponseEntity<ApiResponse<CheckoutResponse>> checkout(@RequestParam(name = "userId") Long userId) throws StripeException {
+        return ResponseEntity.ok(ApiResponse.success(
+                CheckoutResponse.builder()
+                        .checkoutUrl(paymentService.checkout(userId))
+                        .build())
+        );
     }
 
     @GetMapping(ApiEndpoints.Payment.SUCCESS)

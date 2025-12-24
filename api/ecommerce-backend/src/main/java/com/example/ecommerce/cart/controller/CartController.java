@@ -4,7 +4,7 @@ import com.example.ecommerce.cart.dto.request.CartRequest;
 import com.example.ecommerce.cart.entity.Cart;
 import com.example.ecommerce.cart.service.CartService;
 import com.example.ecommerce.common.constants.ApiEndpoints;
-import com.example.ecommerce.common.dto.ApiResponse;
+import com.example.ecommerce.common.dto.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

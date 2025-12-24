@@ -1,4 +1,4 @@
-package com.example.ecommerce.common.dto;
+package com.example.ecommerce.common.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;

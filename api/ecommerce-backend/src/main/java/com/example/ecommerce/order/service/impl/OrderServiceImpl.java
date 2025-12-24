@@ -1,7 +1,6 @@
 package com.example.ecommerce.order.service.impl;
 
 import com.example.ecommerce.cart.entity.Cart;
-import com.example.ecommerce.cart.service.CartService;
 import com.example.ecommerce.order.entity.Order;
 import com.example.ecommerce.order.entity.OrderItem;
 import com.example.ecommerce.order.enums.OrderStatus;
@@ -16,12 +15,11 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
-    private final CartService cartService;
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
 
     @Override
-    public void createOrder(Long userId, Cart cart) {
+    public Order createOrderFromCart(Long userId, Cart cart) {
         double subtotal = cart.getItems().stream()
                 .mapToDouble(item -> item.getQuantity() * item.getUnitPrice())
                 .sum();
@@ -36,13 +34,18 @@ public class OrderServiceImpl implements OrderService {
                 .discountAmount(discount)
                 .deliveryCharge(deliveryCharge)
                 .totalPrice(totalPrice)
-                .status(OrderStatus.PAID)
+                .status(OrderStatus.NEW)
                 .build();
 
         List<OrderItem> orderItems = orderMapper.toOrderItems(cart.getItems());
         orderItems.forEach(item -> item.setOrder(order));
 
         order.setItems(orderItems);
-        orderRepository.save(order);
+        return orderRepository.save(order);
+    }
+
+    @Override
+    public Order save(Order order) {
+        return orderRepository.save(order);
     }
 }

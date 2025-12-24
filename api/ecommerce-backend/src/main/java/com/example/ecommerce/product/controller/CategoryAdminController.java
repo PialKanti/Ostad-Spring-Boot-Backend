@@ -1,8 +1,8 @@
 package com.example.ecommerce.product.controller;
 
 import com.example.ecommerce.common.constants.ApiEndpoints;
-import com.example.ecommerce.common.dto.ApiResponse;
-import com.example.ecommerce.common.dto.PaginatedResponse;
+import com.example.ecommerce.common.dto.response.ApiResponse;
+import com.example.ecommerce.common.dto.response.PaginatedResponse;
 import com.example.ecommerce.product.dto.request.CategoryCreateRequest;
 import com.example.ecommerce.product.dto.request.CategoryUpdateRequest;
 import com.example.ecommerce.product.entity.Category;

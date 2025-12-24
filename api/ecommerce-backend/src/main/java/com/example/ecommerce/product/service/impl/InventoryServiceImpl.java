@@ -18,7 +18,7 @@ public class InventoryServiceImpl implements InventoryService {
         Inventory inventory = inventoryRepository.findByProductId(productId)
                 .orElseThrow(() -> new EntityNotFoundException("Inventory not found for product with ID: " + productId + "."));
 
-        inventory.setQuantity(inventory.getQuantity() + request.quantity());
+        inventory.setTotalQuantity(inventory.getTotalQuantity() + request.quantity());
         inventoryRepository.save(inventory);
     }
 }

@@ -42,7 +42,6 @@ public class ProductServiceImpl implements ProductService {
 
         Inventory inventory = Inventory.builder()
                 .product(savedProduct)
-                .quantity(0)
                 .build();
 
         inventoryRepository.save(inventory);

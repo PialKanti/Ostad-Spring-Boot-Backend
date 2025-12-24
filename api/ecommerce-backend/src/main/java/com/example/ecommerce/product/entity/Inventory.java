@@ -16,8 +16,13 @@ public class Inventory extends BaseEntity {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Column(nullable = false)
-    private Integer quantity;
+    @Builder.Default
+    @Column(name = "total_quantity", nullable = false)
+    private Integer totalQuantity = 0;
+
+    @Builder.Default
+    @Column(name = "reserved_quantity", nullable = false)
+    private Integer reservedQuantity = 0;
 
     @Version
     private Long version;

@@ -52,7 +52,7 @@ public class CategoryAdminController {
             }
     )
     @PostMapping
-    public ResponseEntity<ApiResponse<Category>> createCategory(@Valid CategoryCreateRequest request) {
+    public ResponseEntity<ApiResponse<Category>> createCategory(@Valid @RequestBody CategoryCreateRequest request) {
         return ResponseEntity.ok(ApiResponse.success(categoryService.create(request)));
     }
 

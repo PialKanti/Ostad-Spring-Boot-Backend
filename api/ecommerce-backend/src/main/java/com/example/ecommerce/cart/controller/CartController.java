@@ -72,7 +72,7 @@ public class CartController {
             }
     )
     @GetMapping
-    public ResponseEntity<ApiResponse<Cart>> viewCart(@RequestParam Long userId) {
+    public ResponseEntity<ApiResponse<Cart>> viewCart(@RequestParam(name = "user_id") Long userId) {
         return ResponseEntity.ok(ApiResponse.success(cartService.getCartByUserId(userId)));
     }
 }

@@ -9,6 +9,7 @@ import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ProductMapper {
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "name", source = "request.name")
     @Mapping(target = "category", source = "category")
     Product toEntity(ProductCreateRequest request, Category category);

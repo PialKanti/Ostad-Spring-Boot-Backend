@@ -12,6 +12,9 @@ import java.util.List;
 public interface OrderMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "order", ignore = true)
+    @Mapping(target = "productId", source = "product.id")
+    @Mapping(target = "productName", source = "product.name")
+    @Mapping(target = "sku", source = "product.sku")
     OrderItem toOrderItem(CartItem cartItem);
 
     List<OrderItem> toOrderItems(List<CartItem> cartItems);

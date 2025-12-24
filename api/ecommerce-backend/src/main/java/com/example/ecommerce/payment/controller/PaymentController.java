@@ -17,7 +17,7 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @PostMapping(ApiEndpoints.Payment.CHECKOUT)
-    public ResponseEntity<ApiResponse<CheckoutResponse>> checkout(@RequestParam(name = "userId") Long userId) throws StripeException {
+    public ResponseEntity<ApiResponse<CheckoutResponse>> checkout(@RequestParam(name = "user_id") Long userId) throws StripeException {
         return ResponseEntity.ok(ApiResponse.success(
                 CheckoutResponse.builder()
                         .checkoutUrl(paymentService.checkout(userId))

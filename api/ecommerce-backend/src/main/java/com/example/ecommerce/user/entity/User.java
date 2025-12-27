@@ -15,9 +15,6 @@ import java.util.List;
 @Table(name = "users")
 @Getter
 @Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class User extends AuditableEntity implements UserDetails {
     @Column(name = "first_name", nullable = false, length = 100)
     private String firstName;

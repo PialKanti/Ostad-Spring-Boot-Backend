@@ -12,9 +12,6 @@ import java.time.LocalDateTime;
 @Table(name = "user_profiles")
 @Getter
 @Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class UserProfile extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "user_id", nullable = true, unique = true)

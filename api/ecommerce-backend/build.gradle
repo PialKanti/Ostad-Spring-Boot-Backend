@@ -48,6 +48,11 @@ dependencies {
     // --- Payment Integration ---
     implementation 'com.stripe:stripe-java:24.9.0' // Stripe SDK
 
+    // --- JWT Token ---
+    implementation "io.jsonwebtoken:jjwt-api:0.13.0"
+    runtimeOnly "io.jsonwebtoken:jjwt-impl:0.13.0"
+    runtimeOnly "io.jsonwebtoken:jjwt-jackson:0.13.0"
+
     // --- Testing ---
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

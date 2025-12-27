@@ -1,7 +1,11 @@
 package com.example.ecommerce.user.service.impl;
 
+import com.example.ecommerce.common.config.JwtProperties;
 import com.example.ecommerce.common.exception.ResourceConflictException;
+import com.example.ecommerce.common.service.JwtService;
+import com.example.ecommerce.user.dto.request.LoginRequest;
 import com.example.ecommerce.user.dto.request.UserRegistrationRequest;
+import com.example.ecommerce.user.dto.response.LoginResponse;
 import com.example.ecommerce.user.dto.response.RegisteredUserResponse;
 import com.example.ecommerce.user.entity.User;
 import com.example.ecommerce.user.entity.UserProfile;
@@ -12,15 +16,24 @@ import com.example.ecommerce.user.repository.UserRepository;
 import com.example.ecommerce.user.service.AuthService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
     private final UserRepository userRepository;
     private final UserProfileRepository userProfileRepository;
     private final UserMapper userMapper;
     private final UserProfileMapper userProfileMapper;
+    private final JwtProperties jwtProperties;
 
     @Transactional
     @Override
@@ -40,5 +53,23 @@ public class AuthServiceImpl implements AuthService {
         userProfileRepository.save(profile);
 
         return userMapper.toResponse(savedUser);
+    }
+
+    @Override
+    public LoginResponse login(LoginRequest request) {
+        Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(request.username(), request.password()));
+
+        User user = (User) authentication.getPrincipal();
+
+        String accessToken = jwtService.generateToken(user);
+
+        LocalDateTime expiresAt = LocalDateTime.now()
+                .plus(Duration.ofMillis(jwtProperties.getExpirationMs()));
+
+        return LoginResponse.builder()
+                .accessToken(accessToken)
+                .expiresAt(expiresAt)
+                .build();
     }
 }

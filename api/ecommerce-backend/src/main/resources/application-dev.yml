@@ -5,6 +5,12 @@ spring:
     password: admin@123
     url: jdbc:postgresql://localhost:5432/ecommerce_db
 
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: admin@123
+
 application:
   security:
     jwt:

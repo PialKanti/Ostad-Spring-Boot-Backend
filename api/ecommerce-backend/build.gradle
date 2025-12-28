@@ -36,6 +36,9 @@ dependencies {
     implementation 'org.flywaydb:flyway-core' // Flyway migration
     implementation 'org.flywaydb:flyway-database-postgresql' // PostgreSQL support
 
+    // --- Redis Caching ---
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
     // --- Code Generation & Mapping ---
     compileOnly 'org.projectlombok:lombok' // Lombok (compile-time only)
     annotationProcessor 'org.projectlombok:lombok'

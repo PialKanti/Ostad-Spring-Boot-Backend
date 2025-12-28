@@ -14,6 +14,7 @@ import com.example.ecommerce.user.mapper.UserProfileMapper;
 import com.example.ecommerce.user.repository.UserProfileRepository;
 import com.example.ecommerce.user.repository.UserRepository;
 import com.example.ecommerce.user.service.AuthService;
+import com.example.ecommerce.user.service.BlackListedTokenService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,12 +24,16 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Date;
+
+import static com.example.ecommerce.common.constants.ApplicationConstant.BEARER_PREFIX;
 
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final BlackListedTokenService blackListedTokenService;
     private final UserRepository userRepository;
     private final UserProfileRepository userProfileRepository;
     private final UserMapper userMapper;
@@ -71,5 +76,13 @@ public class AuthServiceImpl implements AuthService {
                 .accessToken(accessToken)
                 .expiresAt(expiresAt)
                 .build();
+    }
+
+    @Override
+    public void logout(String authorizationHeader) {
+        String token = authorizationHeader.substring(BEARER_PREFIX.length());
+        Date expirationDate = jwtService.extractExpiration(token);
+
+        blackListedTokenService.markAsBlacklisted(token, expirationDate);
     }
 }

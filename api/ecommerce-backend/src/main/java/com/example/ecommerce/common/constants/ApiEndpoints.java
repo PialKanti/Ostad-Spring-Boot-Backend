@@ -37,5 +37,6 @@ public class ApiEndpoints {
         public static final String BASE_AUTH = API_VERSION + "/auth";
         public static final String LOGIN = "/login";
         public static final String REGISTER = "/register";
+        public static final String LOGOUT = "/logout";
     }
 }

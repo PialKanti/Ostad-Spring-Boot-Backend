@@ -1,5 +1,6 @@
-package com.example.ecommerce.config;
+package com.example.ecommerce.common.config;
 
+import com.example.ecommerce.common.constants.ApiEndpoints;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,7 +28,10 @@ public class SecurityConfig {
             "/swagger-ui/**",
             "/webjars/**",
             "/v3/api-docs/**",
-            "/swagger-ui.html"
+            "/swagger-ui.html",
+            ApiEndpoints.Auth.BASE_AUTH + ApiEndpoints.Auth.REGISTER,
+            ApiEndpoints.Auth.BASE_AUTH + ApiEndpoints.Auth.LOGIN,
+            ApiEndpoints.Auth.BASE_AUTH + ApiEndpoints.Auth.LOGOUT
     };
 
     @Bean

@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -39,6 +40,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserMapper userMapper;
     private final UserProfileMapper userProfileMapper;
     private final JwtProperties jwtProperties;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     @Override
@@ -52,6 +54,8 @@ public class AuthServiceImpl implements AuthService {
         }
 
         User user = userMapper.toEntity(request);
+        user.setPassword(passwordEncoder.encode(request.password()));
+
         User savedUser = userRepository.save(user);
 
         UserProfile profile = userProfileMapper.toEntity(request.profile(), savedUser);

@@ -56,6 +56,9 @@ dependencies {
     runtimeOnly "io.jsonwebtoken:jjwt-impl:0.13.0"
     runtimeOnly "io.jsonwebtoken:jjwt-jackson:0.13.0"
 
+    // ---  Encoding and decoding utilities
+    implementation 'commons-codec:commons-codec:1.20.0'
+
     // --- Testing ---
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

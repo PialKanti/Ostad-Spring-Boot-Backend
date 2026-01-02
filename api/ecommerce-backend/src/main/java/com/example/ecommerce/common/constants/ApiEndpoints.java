@@ -33,10 +33,12 @@ public class ApiEndpoints {
         public static final String CANCEL = "/cancel";
     }
 
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Auth {
         public static final String BASE_AUTH = API_VERSION + "/auth";
         public static final String LOGIN = "/login";
         public static final String REGISTER = "/register";
         public static final String LOGOUT = "/logout";
+        public static final String TOKEN_REFRESH = "/refresh";
     }
 }

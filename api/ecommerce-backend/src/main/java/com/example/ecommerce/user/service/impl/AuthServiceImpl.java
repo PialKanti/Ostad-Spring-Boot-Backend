@@ -3,6 +3,8 @@ package com.example.ecommerce.user.service.impl;
 import com.example.ecommerce.common.config.JwtProperties;
 import com.example.ecommerce.common.exception.ResourceConflictException;
 import com.example.ecommerce.common.service.JwtService;
+import com.example.ecommerce.user.dto.LoginResult;
+import com.example.ecommerce.user.dto.RefreshTokenData;
 import com.example.ecommerce.user.dto.request.LoginRequest;
 import com.example.ecommerce.user.dto.request.UserRegistrationRequest;
 import com.example.ecommerce.user.dto.response.LoginResponse;
@@ -15,6 +17,7 @@ import com.example.ecommerce.user.repository.UserProfileRepository;
 import com.example.ecommerce.user.repository.UserRepository;
 import com.example.ecommerce.user.service.AuthService;
 import com.example.ecommerce.user.service.BlackListedTokenService;
+import com.example.ecommerce.user.service.RefreshTokenService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -34,6 +37,7 @@ import static com.example.ecommerce.common.constants.ApplicationConstant.BEARER_
 public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
     private final BlackListedTokenService blackListedTokenService;
     private final UserRepository userRepository;
     private final UserProfileRepository userProfileRepository;
@@ -65,7 +69,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public LoginResponse login(LoginRequest request) {
+    public LoginResult login(LoginRequest request) {
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(request.username(), request.password()));
 
@@ -76,9 +80,15 @@ public class AuthServiceImpl implements AuthService {
         LocalDateTime expiresAt = LocalDateTime.now()
                 .plus(Duration.ofMillis(jwtProperties.getExpirationMs()));
 
-        return LoginResponse.builder()
-                .accessToken(accessToken)
-                .expiresAt(expiresAt)
+        RefreshTokenData refreshTokenData = refreshTokenService.create(user);
+
+        return LoginResult.builder()
+                .loginResponse(LoginResponse.builder()
+                        .accessToken(accessToken)
+                        .expiresAt(expiresAt)
+                        .build())
+                .refreshToken(refreshTokenData.rawToken())
+                .refreshTokenDuration(Duration.ofSeconds(refreshTokenData.expirySeconds()))
                 .build();
     }
 

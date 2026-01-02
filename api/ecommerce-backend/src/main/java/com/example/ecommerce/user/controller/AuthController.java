@@ -2,11 +2,13 @@ package com.example.ecommerce.user.controller;
 
 import com.example.ecommerce.common.constants.ApiEndpoints;
 import com.example.ecommerce.common.dto.response.ApiResponse;
+import com.example.ecommerce.user.dto.LoginResult;
 import com.example.ecommerce.user.dto.request.LoginRequest;
 import com.example.ecommerce.user.dto.request.UserRegistrationRequest;
 import com.example.ecommerce.user.dto.response.LoginResponse;
 import com.example.ecommerce.user.dto.response.RegisteredUserResponse;
 import com.example.ecommerce.user.service.AuthService;
+import com.example.ecommerce.user.service.RefreshTokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 )
 public class AuthController {
     private final AuthService authService;
+    private final RefreshTokenService refreshTokenService;
 
     @Operation(
             summary = "Register a new user",
@@ -68,8 +72,21 @@ public class AuthController {
             }
     )
     @PostMapping(ApiEndpoints.Auth.LOGIN)
-    public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
-        return ResponseEntity.ok(ApiResponse.success("User logged in successfully", authService.login(request)));
+    public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request,
+                                                            HttpServletResponse response) {
+        LoginResult result = authService.login(request);
+
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", result.refreshToken())
+                .httpOnly(true)
+                .secure(false)
+                .sameSite("Strict")
+                .path(ApiEndpoints.Auth.BASE_AUTH + ApiEndpoints.Auth.TOKEN_REFRESH)
+                .maxAge(result.refreshTokenDuration())
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+
+        return ResponseEntity.ok(ApiResponse.success("User logged in successfully", result.loginResponse()));
     }
 
     @PostMapping(ApiEndpoints.Auth.LOGOUT)

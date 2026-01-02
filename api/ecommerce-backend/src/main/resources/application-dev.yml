@@ -16,6 +16,8 @@ application:
     jwt:
       signing-key: 5heUCJxsTsaYyTE6+XB+tnpvdZkttNv5PBWHe9v9q73kGjDa2+UI2YQMWPj1Fpec
       expiration-ms: 600000 # 10 minutes
+    refresh-token:
+      expiration-ms: 604800000 # 7 days
 
 
 stripe:

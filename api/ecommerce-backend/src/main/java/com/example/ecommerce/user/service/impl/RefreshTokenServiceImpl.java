@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +41,22 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                 .rawToken(rawToken)
                 .expirySeconds(refreshTokenProperties.getExpirationSeconds())
                 .build();
+    }
+
+    @Override
+    public Optional<RefreshToken> findByToken(String token) {
+        return refreshTokenRepository.findByToken(token);
+    }
+
+    @Override
+    public RefreshTokenData rotate(RefreshToken oldToken) {
+        // Step 1: revoke old token
+        oldToken.setIsRevoked(true);
+        oldToken.setRevokedAt(LocalDateTime.now());
+        refreshTokenRepository.save(oldToken);
+
+        // Step 2: issue new token for same user
+        return create(oldToken.getUser());
     }
 
     private String generateSecureToken() {

@@ -1,14 +1,18 @@
 package com.example.ecommerce.user.service.impl;
 
 import com.example.ecommerce.common.config.JwtProperties;
+import com.example.ecommerce.common.exception.InvalidRefreshTokenException;
 import com.example.ecommerce.common.exception.ResourceConflictException;
 import com.example.ecommerce.common.service.JwtService;
 import com.example.ecommerce.user.dto.LoginResult;
 import com.example.ecommerce.user.dto.RefreshTokenData;
+import com.example.ecommerce.user.dto.TokenRefreshResult;
 import com.example.ecommerce.user.dto.request.LoginRequest;
 import com.example.ecommerce.user.dto.request.UserRegistrationRequest;
 import com.example.ecommerce.user.dto.response.LoginResponse;
 import com.example.ecommerce.user.dto.response.RegisteredUserResponse;
+import com.example.ecommerce.user.dto.response.TokenRefreshResponse;
+import com.example.ecommerce.user.entity.RefreshToken;
 import com.example.ecommerce.user.entity.User;
 import com.example.ecommerce.user.entity.UserProfile;
 import com.example.ecommerce.user.mapper.UserMapper;
@@ -98,5 +102,36 @@ public class AuthServiceImpl implements AuthService {
         Date expirationDate = jwtService.extractExpiration(token);
 
         blackListedTokenService.markAsBlacklisted(token, expirationDate);
+    }
+
+    @Override
+    public TokenRefreshResult refreshToken(String rawRefreshToken) {
+        // Step 1: Validate refresh token
+        RefreshToken refreshToken = refreshTokenService.findByToken(rawRefreshToken)
+                .orElseThrow(() -> new InvalidRefreshTokenException("Invalid or expired refresh token"));
+
+        if (Boolean.TRUE.equals(refreshToken.getIsRevoked()) || refreshToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+            throw new InvalidRefreshTokenException("Refresh token is revoked or expired");
+        }
+
+        // Step 2: Get user
+        User user = refreshToken.getUser();
+
+        // Step 3: Generate new access token
+        String newAccessToken = jwtService.generateToken(user);
+        LocalDateTime accessTokenExpiry = LocalDateTime.now().plus(Duration.ofMillis(jwtProperties.getExpirationMs()));
+
+        // Step 4: Rotate refresh tokens
+        RefreshTokenData newRefreshTokenData = refreshTokenService.rotate(refreshToken);
+
+        // Step 5: Return result DTO
+        return TokenRefreshResult.builder()
+                .tokenRefreshResponse(TokenRefreshResponse.builder()
+                        .accessToken(newAccessToken)
+                        .expiresAt(accessTokenExpiry)
+                        .build())
+                .refreshToken(newRefreshTokenData.rawToken())
+                .refreshTokenDuration(Duration.ofSeconds(newRefreshTokenData.expirySeconds()))
+                .build();
     }
 }

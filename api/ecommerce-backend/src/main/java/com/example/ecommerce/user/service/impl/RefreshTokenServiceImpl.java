@@ -44,8 +44,9 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public Optional<RefreshToken> findByToken(String token) {
-        return refreshTokenRepository.findByToken(token);
+    public Optional<RefreshToken> findByToken(String rawToken) {
+        String hashedToken = hashToken(rawToken);
+        return refreshTokenRepository.findByToken(hashedToken);
     }
 
     @Override

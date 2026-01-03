@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface RefreshTokenService {
     RefreshTokenData create(User user);
 
-    Optional<RefreshToken> findByToken(String token);
+    Optional<RefreshToken> findByToken(String rawToken);
 
     RefreshTokenData rotate(RefreshToken oldToken);
 }

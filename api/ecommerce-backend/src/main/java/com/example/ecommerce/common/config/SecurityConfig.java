@@ -31,7 +31,8 @@ public class SecurityConfig {
             "/swagger-ui.html",
             ApiEndpoints.Auth.BASE_AUTH + ApiEndpoints.Auth.REGISTER,
             ApiEndpoints.Auth.BASE_AUTH + ApiEndpoints.Auth.LOGIN,
-            ApiEndpoints.Auth.BASE_AUTH + ApiEndpoints.Auth.LOGOUT
+            ApiEndpoints.Auth.BASE_AUTH + ApiEndpoints.Auth.LOGOUT,
+            ApiEndpoints.Auth.BASE_AUTH + ApiEndpoints.Auth.TOKEN_REFRESH
     };
 
     @Bean

@@ -19,13 +19,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(ApiEndpoints.CategoryAdmin.BASE_CATEGORY_ADMIN)
+@RequestMapping(ApiEndpoints.Category.BASE_CATEGORY)
 @RequiredArgsConstructor
 @Tag(
-        name = "Category Admin",
-        description = "Administrative operations for managing product categories"
+        name = "Category",
+        description = "Operations for managing product categories"
 )
-public class CategoryAdminController {
+public class CategoryController {
     private final CategoryService categoryService;
 
     @Operation(

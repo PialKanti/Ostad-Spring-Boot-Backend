@@ -17,12 +17,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(ApiEndpoints.ProductAdmin.BASE_PRODUCT_ADMIN)
+@RequestMapping(ApiEndpoints.Product.BASE_PRODUCT)
 @RequiredArgsConstructor
 @Tag(
-        name = "Product Admin",
-        description = "Administrative operations for managing products")
-public class ProductAdminController {
+        name = "Product",
+        description = "Operations for managing products")
+public class ProductController {
     private final ProductService productService;
     private final InventoryService inventoryService;
 
@@ -52,7 +52,7 @@ public class ProductAdminController {
         return ResponseEntity.ok(ApiResponse.success(productService.create(request)));
     }
 
-    @PutMapping(ApiEndpoints.ProductAdmin.PRODUCT_INVENTORY)
+    @PutMapping(ApiEndpoints.Product.PRODUCT_INVENTORY)
     public ResponseEntity<ApiResponse<Void>> updateStock(@PathVariable Long productId, @Valid @RequestBody InventoryUpdateRequest request) {
         inventoryService.updateStock(productId, request);
         return ResponseEntity.ok(ApiResponse.success("Stock updated successfully."));

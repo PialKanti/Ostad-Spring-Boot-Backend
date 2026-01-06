@@ -9,13 +9,13 @@ public class ApiEndpoints {
     private static final String BASE_ADMIN = "/admin";
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class CategoryAdmin {
-        public static final String BASE_CATEGORY_ADMIN = API_VERSION + BASE_ADMIN + "/categories";
+    public static class Category {
+        public static final String BASE_CATEGORY = API_VERSION + "/categories";
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class ProductAdmin {
-        public static final String BASE_PRODUCT_ADMIN = API_VERSION + BASE_ADMIN + "/products";
+    public static class Product {
+        public static final String BASE_PRODUCT = API_VERSION + "/products";
         public static final String PRODUCT_INVENTORY = "{productId}/inventory";
     }
 

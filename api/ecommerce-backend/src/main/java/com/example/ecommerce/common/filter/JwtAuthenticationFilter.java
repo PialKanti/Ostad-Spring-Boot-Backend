@@ -3,7 +3,9 @@ package com.example.ecommerce.common.filter;
 import com.example.ecommerce.common.service.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
-                                    @NonNull FilterChain filterChain) throws IOException {
+                                    @NonNull FilterChain filterChain) throws IOException, ServletException {
         try {
             String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
@@ -66,7 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             writeErrorMessageToResponse(response, "JWT token has expired. Please log in again.");
         } catch (UsernameNotFoundException _) {
             writeErrorMessageToResponse(response, "User not found. Please check your credentials.");
-        } catch (Exception _) {
+        } catch (JwtException _) {
             writeErrorMessageToResponse(response, "Invalid JWT token");
         }
     }

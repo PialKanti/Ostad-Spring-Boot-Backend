@@ -29,6 +29,11 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
+    public String extractUsername(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+
+    @Override
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }

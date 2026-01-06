@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -50,6 +51,7 @@ public class CartController {
             }
     )
     @PostMapping(ApiEndpoints.Cart.ADD_CART_ITEM)
+    @PreAuthorize("hasAuthority(T(com.example.ecommerce.user.enums.PermissionType).ADD_TO_CART.name())")
     public ResponseEntity<ApiResponse<Void>> createOrUpdateCart(@PathVariable Long productId, @Valid @RequestBody CartRequest request) {
         cartService.addOrUpdateCartItem(productId, request);
         return ResponseEntity.ok(ApiResponse.success("Item added to cart successfully."));
@@ -72,6 +74,7 @@ public class CartController {
             }
     )
     @GetMapping
+    @PreAuthorize("hasAuthority(T(com.example.ecommerce.user.enums.PermissionType).VIEW_CART.name())")
     public ResponseEntity<ApiResponse<Cart>> viewCart(@RequestParam(name = "user_id") Long userId) {
         return ResponseEntity.ok(ApiResponse.success(cartService.getCartByUserId(userId)));
     }

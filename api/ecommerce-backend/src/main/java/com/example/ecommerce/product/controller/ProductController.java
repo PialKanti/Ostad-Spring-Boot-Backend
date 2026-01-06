@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -48,11 +49,13 @@ public class ProductController {
             }
     )
     @PostMapping
+    @PreAuthorize("hasAuthority(T(com.example.ecommerce.user.enums.PermissionType).CREATE_PRODUCT.name())")
     public ResponseEntity<ApiResponse<Product>> createProduct(@Valid @RequestBody ProductCreateRequest request) {
         return ResponseEntity.ok(ApiResponse.success(productService.create(request)));
     }
 
     @PutMapping(ApiEndpoints.Product.PRODUCT_INVENTORY)
+    @PreAuthorize("hasAuthority(T(com.example.ecommerce.user.enums.PermissionType).UPDATE_INVENTORY.name())")
     public ResponseEntity<ApiResponse<Void>> updateStock(@PathVariable Long productId, @Valid @RequestBody InventoryUpdateRequest request) {
         inventoryService.updateStock(productId, request);
         return ResponseEntity.ok(ApiResponse.success("Stock updated successfully."));

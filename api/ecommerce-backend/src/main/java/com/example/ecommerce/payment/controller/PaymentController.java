@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -45,6 +46,7 @@ public class PaymentController {
             }
     )
     @PostMapping(ApiEndpoints.Payment.CHECKOUT)
+    @PreAuthorize("hasAuthority(T(com.example.ecommerce.user.enums.PermissionType).CHECKOUT.name())")
     public ResponseEntity<ApiResponse<CheckoutResponse>> checkout(@RequestParam(name = "user_id") Long userId) throws StripeException {
         return ResponseEntity.ok(ApiResponse.success(
                 CheckoutResponse.builder()
@@ -70,6 +72,7 @@ public class PaymentController {
             }
     )
     @GetMapping(ApiEndpoints.Payment.SUCCESS)
+    @PreAuthorize("hasAuthority(T(com.example.ecommerce.user.enums.PermissionType).PAYMENT_SUCCESS.name())")
     public ResponseEntity<ApiResponse<Void>> paymentSuccess(@RequestParam("session_id") String sessionId) {
         paymentService.handleSuccessfulPayment(sessionId);
 
@@ -87,6 +90,7 @@ public class PaymentController {
             }
     )
     @GetMapping(ApiEndpoints.Payment.CANCEL)
+    @PreAuthorize("hasAuthority(T(com.example.ecommerce.user.enums.PermissionType).PAYMENT_CANCEL.name())")
     public String paymentCancel() {
         return "Payment canceled.";
     }

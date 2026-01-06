@@ -32,7 +32,8 @@ INSERT INTO role_permissions (role_id, permission_id)
 SELECT r.id, p.id
 FROM roles r
          JOIN permissions p ON p.code IN (
-                                          'VIEW_PRODUCTS', 'VIEW_CATEGORY', 'VIEW_CART', 'ADD_TO_CART',
+                                          'UPDATE_PROFILE', 'VIEW_PRODUCTS', 'VIEW_CATEGORY',
+                                          'VIEW_CART', 'ADD_TO_CART',
                                           'CHECKOUT', 'PAYMENT_SUCCESS', 'PAYMENT_CANCEL'
     )
 WHERE r.code = 'CUSTOMER';

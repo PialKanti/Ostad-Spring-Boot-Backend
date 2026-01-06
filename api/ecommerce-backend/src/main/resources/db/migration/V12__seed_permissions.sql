@@ -15,6 +15,7 @@ VALUES
     ('View Category', 'VIEW_CATEGORY'),
 
     -- Customer / General
+    ('Update Profile', 'UPDATE_PROFILE'),
     ('View Products', 'VIEW_PRODUCTS'),
     ('View Cart', 'VIEW_CART'),
     ('Add To Cart', 'ADD_TO_CART'),

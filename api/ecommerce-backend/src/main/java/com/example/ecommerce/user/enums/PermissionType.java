@@ -20,6 +20,7 @@ public enum PermissionType {
     VIEW_CATEGORY("View Category"),
 
     // Customer / General
+    UPDATE_PROFILE("Update Profile"),
     VIEW_PRODUCTS("View Products"),
     VIEW_CART("View Cart"),
     ADD_TO_CART("Add To Cart"),

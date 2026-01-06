@@ -23,7 +23,11 @@ public enum PermissionType {
     VIEW_PRODUCTS("View Products"),
     VIEW_CART("View Cart"),
     ADD_TO_CART("Add To Cart"),
-    CHECKOUT("Checkout");
+
+    // Payments
+    CHECKOUT("Checkout"),
+    PAYMENT_SUCCESS("Payment Success"),
+    PAYMENT_CANCEL("Payment Cancel");
 
     private final String displayValue;
 }

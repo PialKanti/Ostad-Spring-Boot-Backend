@@ -13,8 +13,10 @@ import com.example.ecommerce.user.dto.response.LoginResponse;
 import com.example.ecommerce.user.dto.response.RegisteredUserResponse;
 import com.example.ecommerce.user.dto.response.TokenRefreshResponse;
 import com.example.ecommerce.user.entity.RefreshToken;
+import com.example.ecommerce.user.entity.Role;
 import com.example.ecommerce.user.entity.User;
 import com.example.ecommerce.user.entity.UserProfile;
+import com.example.ecommerce.user.enums.RoleType;
 import com.example.ecommerce.user.mapper.UserMapper;
 import com.example.ecommerce.user.mapper.UserProfileMapper;
 import com.example.ecommerce.user.repository.UserProfileRepository;
@@ -22,6 +24,8 @@ import com.example.ecommerce.user.repository.UserRepository;
 import com.example.ecommerce.user.service.AuthService;
 import com.example.ecommerce.user.service.BlackListedTokenService;
 import com.example.ecommerce.user.service.RefreshTokenService;
+import com.example.ecommerce.user.service.RoleService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,6 +37,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Set;
 
 import static com.example.ecommerce.common.constants.ApplicationConstant.BEARER_PREFIX;
 
@@ -41,6 +46,7 @@ import static com.example.ecommerce.common.constants.ApplicationConstant.BEARER_
 public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final RoleService roleService;
     private final RefreshTokenService refreshTokenService;
     private final BlackListedTokenService blackListedTokenService;
     private final UserRepository userRepository;
@@ -63,6 +69,11 @@ public class AuthServiceImpl implements AuthService {
 
         User user = userMapper.toEntity(request);
         user.setPassword(passwordEncoder.encode(request.password()));
+
+        Role customerRole = roleService.findByCode(RoleType.CUSTOMER)
+                .orElseThrow(() -> new EntityNotFoundException("Customer role not found."));
+
+        user.setRoles(Set.of(customerRole));
 
         User savedUser = userRepository.save(user);
 

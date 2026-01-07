@@ -1,0 +1,11 @@
+package com.example.ecommerce.user.repository;
+
+import com.example.ecommerce.user.entity.Role;
+import com.example.ecommerce.user.enums.RoleType;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+
+public interface RoleRepository extends JpaRepository<Role, Long> {
+    Optional<Role> findByCode(RoleType code);
+}

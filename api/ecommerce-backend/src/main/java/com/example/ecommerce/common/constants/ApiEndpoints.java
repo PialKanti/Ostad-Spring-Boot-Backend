@@ -41,4 +41,10 @@ public class ApiEndpoints {
         public static final String LOGOUT = "/logout";
         public static final String TOKEN_REFRESH = "/refresh";
     }
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class User {
+        public static final String BASE_USER = API_VERSION + "/users";
+        public static final String PROFILE = "/profile/{username}";
+    }
 }

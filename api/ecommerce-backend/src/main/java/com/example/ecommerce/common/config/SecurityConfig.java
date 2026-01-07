@@ -3,8 +3,14 @@ package com.example.ecommerce.common.config;
 import com.example.ecommerce.common.constants.ApiEndpoints;
 import com.example.ecommerce.common.filter.JwtAuthenticationFilter;
 import com.example.ecommerce.user.enums.RoleType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ProblemDetail;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -23,6 +29,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
     private static final String[] WHITELIST_URLS = {
             "/error/**",
@@ -39,6 +46,8 @@ public class SecurityConfig {
             ApiEndpoints.Auth.BASE_AUTH + ApiEndpoints.Auth.LOGOUT,
             ApiEndpoints.Auth.BASE_AUTH + ApiEndpoints.Auth.TOKEN_REFRESH
     };
+
+    private final ObjectMapper objectMapper;
 
     @Bean
     public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService,
@@ -78,7 +87,19 @@ public class SecurityConfig {
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(ex -> ex
+                        .accessDeniedHandler(((request, response, accessDeniedException) -> {
+                            // Customizing error message in case of permission denied
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+                            ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, "You do not have permission to access this resource.");
+                            problemDetail.setProperty("path", request.getRequestURI());
+
+                            objectMapper.writeValue(response.getWriter(), problemDetail);
+                        }))
+                );
 
         return httpSecurity.build();
     }

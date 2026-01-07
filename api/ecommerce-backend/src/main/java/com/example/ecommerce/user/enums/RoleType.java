@@ -8,7 +8,8 @@ import lombok.RequiredArgsConstructor;
 public enum RoleType {
     SUPER_ADMIN("Super Admin"),
     ADMIN("Admin"),
-    USER("User");
+    USER("User"),
+    CUSTOMER("Customer");
 
     private final String displayValue;
 }

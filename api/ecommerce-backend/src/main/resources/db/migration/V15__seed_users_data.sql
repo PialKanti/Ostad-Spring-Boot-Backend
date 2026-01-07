@@ -1,15 +1,15 @@
 -- Seed users with BCrypt hashed password for 'password123'
--- Hash: $2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.TVuHOn2
+-- Hash: $2a$10$DVaZleF3yUCi90ZV7FkVpOgYuq/ba8gawtr3lq8yFqUbKvhCYfhsW
 
 INSERT INTO users (first_name, last_name, email, username, password, created_at)
 VALUES ('Super', 'Admin', 'superadmin@example.com', 'superadmin',
-        '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.TVuHOn2', CURRENT_TIMESTAMP),
-       ('Admin', 'User', 'admin@example.com', 'admin', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.TVuHOn2',
+        '$2a$10$DVaZleF3yUCi90ZV7FkVpOgYuq/ba8gawtr3lq8yFqUbKvhCYfhsW', CURRENT_TIMESTAMP),
+       ('Admin', 'User', 'admin@example.com', 'admin', '$2a$10$DVaZleF3yUCi90ZV7FkVpOgYuq/ba8gawtr3lq8yFqUbKvhCYfhsW',
         CURRENT_TIMESTAMP),
        ('Seller', 'User', 'seller@example.com', 'seller',
-        '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.TVuHOn2', CURRENT_TIMESTAMP),
+        '$2a$10$DVaZleF3yUCi90ZV7FkVpOgYuq/ba8gawtr3lq8yFqUbKvhCYfhsW', CURRENT_TIMESTAMP),
        ('Customer', 'User', 'customer@example.com', 'customer',
-        '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.TVuHOn2', CURRENT_TIMESTAMP);
+        '$2a$10$DVaZleF3yUCi90ZV7FkVpOgYuq/ba8gawtr3lq8yFqUbKvhCYfhsW', CURRENT_TIMESTAMP);
 
 -- Map users to roles
 INSERT INTO user_roles (user_id, role_id)

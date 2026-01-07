@@ -89,12 +89,13 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(ex -> ex
-                        .accessDeniedHandler(((request, response, accessDeniedException) -> {
+                        .accessDeniedHandler(((request, response, _) -> {
                             // Customizing error message in case of permission denied
                             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-                            ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, "You do not have permission to access this resource.");
+                            ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN,
+                                    "You do not have permission to access this resource.");
                             problemDetail.setProperty("path", request.getRequestURI());
 
                             objectMapper.writeValue(response.getWriter(), problemDetail);

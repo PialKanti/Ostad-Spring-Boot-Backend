@@ -9,10 +9,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @ActiveProfiles("test")
+@DisplayName("Product Repository Tests")
 class ProductRepositoryTest {
 
     @Autowired
@@ -21,58 +24,90 @@ class ProductRepositoryTest {
     @Autowired
     private TestEntityManager entityManager;
 
+    /* ------------------------------------------------------------------
+     * Save
+     * ------------------------------------------------------------------ */
+
     @Test
-    @DisplayName("Should save a product")
+    @DisplayName("Should save product successfully")
     void shouldSaveProduct() {
-        Category category = new Category();
-        category.setName("Electronics");
-        category.setCode("ELECT-001");
-        category.setIsActive(true);
-        entityManager.persist(category);
+        // Arrange
+        Category category = persistCategory("Electronics");
+        Product product = newProduct("Smartphone", "PROD-001", 500.0, category);
 
-        Product product = new Product();
-        product.setSku("PROD-001");
-        product.setName("Smartphone");
-        product.setPrice(500.0);
-        product.setCategory(category);
-        product.setIsActive(true);
+        // Act
+        Product saved = productRepository.save(product);
 
-        Product savedProduct = productRepository.save(product);
-
-        assertThat(savedProduct).isNotNull();
-        assertThat(savedProduct.getId()).isGreaterThan(0);
-        assertThat(savedProduct.getSku()).isEqualTo("PROD-001");
-        assertThat(savedProduct.getCategory()).isEqualTo(category);
+        // Assert
+        assertThat(saved).isNotNull();
+        assertThat(saved.getId()).isNotNull();
+        assertThat(saved.getSku()).isEqualTo(product.getSku());
+        assertThat(saved.getName()).isEqualTo("Smartphone");
+        assertThat(saved.getCategory()).isEqualTo(category);
+        assertThat(saved.getIsActive()).isTrue();
     }
 
+    /* ------------------------------------------------------------------
+     * Exists
+     * ------------------------------------------------------------------ */
+
     @Test
-    @DisplayName("Should return true when sku exists")
+    @DisplayName("Should return true when SKU exists")
     void shouldReturnTrueWhenSkuExists() {
-        Category category = new Category();
-        category.setName("Electronics");
-        category.setCode("ELECT-001");
-        category.setIsActive(true);
-        entityManager.persist(category);
+        // Arrange
+        Category category = persistCategory("Electronics");
+        Product product = newProduct("Laptop", "PROD-002", 1000.0, category);
+        entityManager.persistAndFlush(product);
 
-        Product product = new Product();
-        product.setSku("PROD-002");
-        product.setName("Laptop");
-        product.setPrice(1000.0);
-        product.setCategory(category);
-        product.setIsActive(true);
-        entityManager.persist(product);
-        entityManager.flush();
+        // Act
+        boolean exists = productRepository.existsBySku(product.getSku());
 
-        boolean exists = productRepository.existsBySku("PROD-002");
-
+        // Assert
         assertThat(exists).isTrue();
     }
 
     @Test
-    @DisplayName("Should return false when sku does not exist")
+    @DisplayName("Should return false when SKU does not exist")
     void shouldReturnFalseWhenSkuDoesNotExist() {
-        boolean exists = productRepository.existsBySku("NON-EXISTENT");
+        // Arrange
+        String nonExistingSku = "NON-EXISTENT";
 
+        // Act
+        boolean exists = productRepository.existsBySku(nonExistingSku);
+
+        // Assert
         assertThat(exists).isFalse();
+    }
+
+    /* ------------------------------------------------------------------
+     * Test Helpers
+     * ------------------------------------------------------------------ */
+
+    private Category persistCategory(String name) {
+        Category category = new Category();
+        category.setName(name);
+        category.setCode(uniqueCategoryCode());
+        category.setIsActive(true);
+        entityManager.persistAndFlush(category);
+        return category;
+    }
+
+    private Product newProduct(
+            String name,
+            String sku,
+            double price,
+            Category category
+    ) {
+        Product product = new Product();
+        product.setName(name);
+        product.setSku(sku);
+        product.setPrice(price);
+        product.setCategory(category);
+        product.setIsActive(true);
+        return product;
+    }
+
+    private String uniqueCategoryCode() {
+        return "CAT-" + UUID.randomUUID();
     }
 }

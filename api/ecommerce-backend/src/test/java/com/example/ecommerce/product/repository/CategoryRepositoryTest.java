@@ -9,11 +9,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @ActiveProfiles("test")
+@DisplayName("Category Repository Tests")
 class CategoryRepositoryTest {
 
     @Autowired
@@ -22,57 +24,94 @@ class CategoryRepositoryTest {
     @Autowired
     private TestEntityManager entityManager;
 
+    /* ------------------------------------------------------------------
+     * Save
+     * ------------------------------------------------------------------ */
+
     @Test
-    @DisplayName("Should save a category")
+    @DisplayName("Should save category successfully")
     void shouldSaveCategory() {
-        Category category = new Category();
-        category.setName("Electronics");
-        category.setCode("ELECT-001");
-        category.setIsActive(true);
+        // Arrange
+        Category category = newCategory("Electronics", uniqueCode());
 
-        Category savedCategory = categoryRepository.save(category);
+        // Act
+        Category saved = categoryRepository.save(category);
 
-        assertThat(savedCategory).isNotNull();
-        assertThat(savedCategory.getId()).isGreaterThan(0);
-        assertThat(savedCategory.getName()).isEqualTo("Electronics");
+        // Assert
+        assertThat(saved).isNotNull();
+        assertThat(saved.getId()).isNotNull();
+        assertThat(saved.getName()).isEqualTo("Electronics");
+        assertThat(saved.getCode()).isEqualTo(category.getCode());
+        assertThat(saved.getIsActive()).isTrue();
     }
+
+    /* ------------------------------------------------------------------
+     * Find
+     * ------------------------------------------------------------------ */
 
     @Test
     @DisplayName("Should find category by code")
     void shouldFindCategoryByCode() {
-        Category category = new Category();
-        category.setName("Mobile");
-        category.setCode("MOB-001");
-        category.setIsActive(true);
-        entityManager.persist(category);
-        entityManager.flush();
+        // Arrange
+        Category category = newCategory("Mobile", uniqueCode());
+        entityManager.persistAndFlush(category);
 
-        Optional<Category> found = categoryRepository.findByCode("MOB-001");
+        // Act
+        Optional<Category> result =
+                categoryRepository.findByCode(category.getCode());
 
-        assertThat(found).isPresent();
-        assertThat(found.get().getName()).isEqualTo("Mobile");
+        // Assert
+        assertThat(result).isPresent();
+        assertThat(result.get().getId()).isEqualTo(category.getId());
+        assertThat(result.get().getName()).isEqualTo("Mobile");
     }
 
+    /* ------------------------------------------------------------------
+     * Exists
+     * ------------------------------------------------------------------ */
+
     @Test
-    @DisplayName("Should return true when code exists")
+    @DisplayName("Should return true when category code exists")
     void shouldReturnTrueWhenCodeExists() {
-        Category category = new Category();
-        category.setName("Laptops");
-        category.setCode("LAP-001");
-        category.setIsActive(true);
-        entityManager.persist(category);
-        entityManager.flush();
+        // Arrange
+        Category category = newCategory("Laptop", uniqueCode());
+        entityManager.persistAndFlush(category);
 
-        boolean exists = categoryRepository.existsByCode("LAP-001");
+        // Act
+        boolean exists =
+                categoryRepository.existsByCode(category.getCode());
 
+        // Assert
         assertThat(exists).isTrue();
     }
 
     @Test
-    @DisplayName("Should return false when code does not exist")
+    @DisplayName("Should return false when category code does not exist")
     void shouldReturnFalseWhenCodeDoesNotExist() {
-        boolean exists = categoryRepository.existsByCode("NON-EXISTENT");
+        // Arrange
+        String nonExistingCode = "NON-EXISTENT";
 
+        // Act
+        boolean exists =
+                categoryRepository.existsByCode(nonExistingCode);
+
+        // Assert
         assertThat(exists).isFalse();
+    }
+
+    /* ------------------------------------------------------------------
+     * Test Helpers
+     * ------------------------------------------------------------------ */
+
+    private Category newCategory(String name, String code) {
+        Category category = new Category();
+        category.setName(name);
+        category.setCode(code);
+        category.setIsActive(true);
+        return category;
+    }
+
+    private String uniqueCode() {
+        return "CAT-" + UUID.randomUUID();
     }
 }

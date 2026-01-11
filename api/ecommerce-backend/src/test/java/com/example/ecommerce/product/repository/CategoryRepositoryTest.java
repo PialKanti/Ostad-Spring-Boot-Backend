@@ -5,7 +5,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
@@ -20,9 +19,6 @@ class CategoryRepositoryTest {
 
     @Autowired
     private CategoryRepository categoryRepository;
-
-    @Autowired
-    private TestEntityManager entityManager;
 
     /* ------------------------------------------------------------------
      * Save
@@ -54,7 +50,7 @@ class CategoryRepositoryTest {
     void shouldFindCategoryByCode() {
         // Arrange
         Category category = newCategory("Mobile", uniqueCode());
-        entityManager.persistAndFlush(category);
+        categoryRepository.save(category);
 
         // Act
         Optional<Category> result =
@@ -75,7 +71,7 @@ class CategoryRepositoryTest {
     void shouldReturnTrueWhenCodeExists() {
         // Arrange
         Category category = newCategory("Laptop", uniqueCode());
-        entityManager.persistAndFlush(category);
+        categoryRepository.save(category);
 
         // Act
         boolean exists =

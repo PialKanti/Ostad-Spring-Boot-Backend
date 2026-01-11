@@ -6,7 +6,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.UUID;
@@ -22,7 +21,7 @@ class ProductRepositoryTest {
     private ProductRepository productRepository;
 
     @Autowired
-    private TestEntityManager entityManager;
+    private CategoryRepository categoryRepository;
 
     /* ------------------------------------------------------------------
      * Save
@@ -57,7 +56,7 @@ class ProductRepositoryTest {
         // Arrange
         Category category = persistCategory("Electronics");
         Product product = newProduct("Laptop", "PROD-002", 1000.0, category);
-        entityManager.persistAndFlush(product);
+        productRepository.save(product);
 
         // Act
         boolean exists = productRepository.existsBySku(product.getSku());
@@ -88,8 +87,7 @@ class ProductRepositoryTest {
         category.setName(name);
         category.setCode(uniqueCategoryCode());
         category.setIsActive(true);
-        entityManager.persistAndFlush(category);
-        return category;
+        return categoryRepository.save(category);
     }
 
     private Product newProduct(

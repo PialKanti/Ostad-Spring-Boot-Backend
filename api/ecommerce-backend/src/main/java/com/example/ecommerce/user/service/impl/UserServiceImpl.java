@@ -14,6 +14,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Implementation of {@link UserService} for user management.
+ *
+ * <p>Provides user loading for Spring Security authentication
+ * and user profile management.</p>
+ *
+ * @author Pial Kanti Samadder
+ */
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {

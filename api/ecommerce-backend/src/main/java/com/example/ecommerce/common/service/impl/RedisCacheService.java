@@ -13,6 +13,14 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Implementation of {@link CacheService} using Redis.
+ *
+ * <p>Provides JSON serialization for cached objects via Jackson
+ * ObjectMapper with support for TTL-based expiration.</p>
+ *
+ * @author Pial Kanti Samadder
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j

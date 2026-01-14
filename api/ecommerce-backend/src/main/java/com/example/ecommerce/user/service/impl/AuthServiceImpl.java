@@ -41,6 +41,14 @@ import java.util.Set;
 
 import static com.example.ecommerce.common.constants.ApplicationConstant.BEARER_PREFIX;
 
+/**
+ * Implementation of {@link AuthService} for user authentication.
+ *
+ * <p>Handles registration, login, logout, and token refresh
+ * with JWT-based authentication and refresh token rotation.</p>
+ *
+ * @author Pial Kanti Samadder
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {

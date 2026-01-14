@@ -17,6 +17,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Implementation of {@link ProductService} for managing product lifecycle.
+ *
+ * <p>Handles product creation with category association
+ * and inventory initialization.</p>
+ *
+ * @author Pial Kanti Samadder
+ */
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {

@@ -10,6 +10,14 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Implementation of {@link BlackListedTokenService} using Redis cache.
+ *
+ * <p>Tokens are stored with TTL matching their original expiration
+ * time for automatic cleanup.</p>
+ *
+ * @author Pial Kanti Samadder
+ */
 @Service
 @RequiredArgsConstructor
 public class BlackListedTokenServiceImpl implements BlackListedTokenService {

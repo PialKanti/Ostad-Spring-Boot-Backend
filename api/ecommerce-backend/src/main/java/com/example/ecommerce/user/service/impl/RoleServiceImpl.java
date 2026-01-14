@@ -9,6 +9,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Implementation of {@link RoleService} for role lookup operations.
+ *
+ * <p>Delegates role retrieval to the role repository.</p>
+ *
+ * @author Pial Kanti Samadder
+ */
 @Service
 @RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {

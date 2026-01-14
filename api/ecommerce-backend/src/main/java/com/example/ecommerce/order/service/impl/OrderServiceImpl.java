@@ -12,6 +12,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Implementation of {@link OrderService} for order processing.
+ *
+ * <p>Handles order creation from cart with pricing calculations
+ * including subtotal, discount, and delivery charges.</p>
+ *
+ * @author Pial Kanti Samadder
+ */
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {

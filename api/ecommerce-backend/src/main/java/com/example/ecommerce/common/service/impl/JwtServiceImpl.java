@@ -18,6 +18,14 @@ import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * Implementation of {@link JwtService} using JJWT library.
+ *
+ * <p>Handles JWT generation, parsing, and validation
+ * with HS256 signing algorithm.</p>
+ *
+ * @author Pial Kanti Samadder
+ */
 @Service
 @RequiredArgsConstructor
 public class JwtServiceImpl implements JwtService {

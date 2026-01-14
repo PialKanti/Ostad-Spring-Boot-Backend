@@ -13,6 +13,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+/**
+ * Implementation of {@link CategoryService} for managing product categories.
+ *
+ * <p>Provides CRUD operations and status management for categories
+ * with unique code validation.</p>
+ *
+ * @author Pial Kanti Samadder
+ */
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {

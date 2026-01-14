@@ -12,6 +12,14 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * Implementation of {@link CartService} for shopping cart management.
+ *
+ * <p>Manages cart items with automatic cart creation and item
+ * quantity updates.</p>
+ *
+ * @author Pial Kanti Samadder
+ */
 @Service
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {

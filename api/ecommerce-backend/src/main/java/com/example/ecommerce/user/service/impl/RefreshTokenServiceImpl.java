@@ -15,6 +15,14 @@ import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Optional;
 
+/**
+ * Implementation of {@link RefreshTokenService} with SHA-256 hashing.
+ *
+ * <p>Stores hashed tokens for security; only raw tokens are
+ * returned to clients.</p>
+ *
+ * @author Pial Kanti Samadder
+ */
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenServiceImpl implements RefreshTokenService {

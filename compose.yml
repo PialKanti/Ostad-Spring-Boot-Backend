@@ -12,6 +12,20 @@ services:
       - postgres_data:/var/lib/ostad/ecommerce/data
     networks:
       - backend_net
+  
+  inventory-db:
+    container_name: inventory_service_db
+    image: postgres:18.0-alpine
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: inventory_admin
+      POSTGRES_PASSWORD: inventory@123
+      POSTGRES_DB: inventory_db
+    volumes:
+      - inventory_data:/var/lib/postgresql/data
+    networks:
+      - backend_net
 
   redis:
     container_name: ecommerce_backend_redis
@@ -30,3 +44,4 @@ networks:
 
 volumes:
   postgres_data:
+  inventory_data:

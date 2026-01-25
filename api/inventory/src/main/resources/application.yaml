@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: inventory
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/inventory_db
+    username: inventory_admin
+    password: inventory@123
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+server:
+  port: 8081

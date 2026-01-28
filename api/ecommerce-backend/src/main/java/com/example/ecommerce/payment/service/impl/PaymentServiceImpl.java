@@ -3,16 +3,21 @@ package com.example.ecommerce.payment.service.impl;
 import com.example.ecommerce.cart.entity.Cart;
 import com.example.ecommerce.cart.service.CartService;
 import com.example.ecommerce.common.dto.request.StockReservationRequest;
+import com.example.ecommerce.inventory.dto.ReservationResponse;
+import com.example.ecommerce.inventory.service.InventoryClientService;
 import com.example.ecommerce.order.entity.Order;
 import com.example.ecommerce.order.entity.OrderItem;
+import com.example.ecommerce.order.entity.OrderReservation;
 import com.example.ecommerce.order.enums.OrderStatus;
+import com.example.ecommerce.order.enums.ReservationStatus;
+import com.example.ecommerce.order.repository.OrderReservationRepository;
+import com.example.ecommerce.order.repository.OrderRepository;
 import com.example.ecommerce.order.service.OrderService;
 import com.example.ecommerce.payment.config.StripeConfig;
 import com.example.ecommerce.payment.entity.PaymentHistory;
 import com.example.ecommerce.payment.enums.PaymentStatus;
 import com.example.ecommerce.payment.repository.PaymentHistoryRepository;
 import com.example.ecommerce.payment.service.PaymentService;
-import com.example.ecommerce.product.service.InventoryService;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
@@ -36,9 +41,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class PaymentServiceImpl implements PaymentService {
-    private final InventoryService inventoryService;
+    private final InventoryClientService inventoryClientService;
     private final CartService cartService;
     private final OrderService orderService;
+    private final OrderRepository orderRepository;
+    private final OrderReservationRepository orderReservationRepository;
     private final PaymentHistoryRepository paymentHistoryRepository;
     private final StripeConfig stripeConfig;
 
@@ -50,7 +57,10 @@ public class PaymentServiceImpl implements PaymentService {
             throw new IllegalStateException("Cart is empty");
         }
 
-        // Step 1: Reserve stock
+        // Step 1: Create order FIRST (need order ID for reservations)
+        Order order = orderService.createOrderFromCart(userId, cart);
+
+        // Step 2: Build stock reservation requests
         List<StockReservationRequest> requests = cart.getItems().stream()
                 .map(item -> StockReservationRequest.builder()
                         .productId(item.getProduct().getId())
@@ -58,18 +68,35 @@ public class PaymentServiceImpl implements PaymentService {
                         .build())
                 .toList();
 
-        inventoryService.checkAndReserveStock(requests);
+        // Step 3: Reserve stock via inventory microservice
+        List<ReservationResponse> reservations;
+        try {
+            reservations = inventoryClientService.reserveStockForOrder(requests, order.getId());
+        } catch (Exception e) {
+            log.error("Stock reservation failed for order {}, deleting order", order.getId(), e);
+            orderRepository.delete(order);
+            throw e;
+        }
 
-        // Step 2: Create order with NEW status
-        Order order = orderService.createOrderFromCart(userId, cart);
+        // Step 4: Save reservation IDs to OrderReservation table
+        for (ReservationResponse reservation : reservations) {
+            OrderReservation orderReservation = OrderReservation.builder()
+                    .order(order)
+                    .productId(reservation.getProductId())
+                    .reservationId(reservation.getId())
+                    .quantity(reservation.getQuantity())
+                    .status(ReservationStatus.PENDING)
+                    .build();
+            orderReservationRepository.save(orderReservation);
+        }
 
-        // Step 3: Clear cart
+        // Step 5: Clear cart
         cartService.clearCart(userId);
 
-        // Step 4: Create Stripe session with order reference
+        // Step 6: Create Stripe session with order reference
         Session session = createStripeCheckoutSession(userId, order);
 
-        // Step 5: Insert PaymentHistory
+        // Step 7: Insert PaymentHistory
         PaymentHistory paymentHistory = PaymentHistory.builder()
                 .order(order)
                 .sessionId(session.getId())
@@ -98,14 +125,25 @@ public class PaymentServiceImpl implements PaymentService {
         order.setStatus(OrderStatus.PAID);
         order = orderService.save(order);
 
-
         // Step 2: Update payment history status
         paymentHistory.setStatus(PaymentStatus.SUCCESS);
         paymentHistoryRepository.save(paymentHistory);
 
-        // Step 3: Finalize reserved stock
-        order.getItems().forEach(orderItem ->
-                inventoryService.finalizeReservedStock(orderItem.getProductId(), orderItem.getQuantity()));
+        // Step 3: Get reservation IDs from OrderReservation table and confirm them
+        List<OrderReservation> orderReservations = orderReservationRepository
+                .findByOrderIdAndStatus(order.getId(), ReservationStatus.PENDING);
+
+        List<Long> reservationIds = orderReservations.stream()
+                .map(OrderReservation::getReservationId)
+                .toList();
+
+        inventoryClientService.confirmReservations(reservationIds);
+
+        // Step 4: Update reservation status to CONFIRMED
+        for (OrderReservation reservation : orderReservations) {
+            reservation.setStatus(ReservationStatus.CONFIRMED);
+            orderReservationRepository.save(reservation);
+        }
     }
 
     private Session createStripeCheckoutSession(Long userId, Order order) throws StripeException {
